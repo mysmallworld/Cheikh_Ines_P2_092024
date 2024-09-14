@@ -1,24 +1,31 @@
 <div class="infos">
   <h2>Medals per country</h2>
 
-  <div *ngIf="olympics$ | async as olympics">
-    <p>Number of JOs <br />{{ getNumberOfJOs(olympics) }}</p>
-    <p>Number of countries <br />{{ getNumberOfCountries(olympics) }}</p>
+  <div *ngIf="olympics$ | async as olympics" class="counts">
+    <div class="count">
+      <span class="titleCount">Number of JOs</span>
+      <span class="numberCount">{{ getNumberOfJOs(olympics)}}</span>
+    </div>
+    
+    <div class="count">
+      <span class="titleCount">Number of countries</span>
+      <span class="numberCount">{{ getNumberOfCountries(olympics)}}</span>
+    </div>
   </div>
 </div>
 
 <!-- if data loaded, display graphic -->
-<div *ngIf="olympics$ | async as olympics">
+<div *ngIf="olympics$ | async as olympics" class="graphic">
   <ngx-charts-pie-chart
-    [results]="getMedalsPerCountry(olympics)"
-    [view]="view"
-    [scheme]="colorScheme"
-    [legend]="showLegend"
-    [labels]="showLabels"
-    [animations]="showAnimation"
-    [explodeSlices]="isExplodeSlices"
-    [doughnut]="isDoughnut"
-    [gradient]="isGradient"
+  [results]="getMedalsPerCountry(olympics)"
+  [view]="view"
+  [scheme]="colorScheme"
+  [legend]="showLegend"
+  [labels]="showLabels"
+  [animations]="showAnimation"
+  [explodeSlices]="isExplodeSlices"
+  [doughnut]="isDoughnut"
+  [gradient]="isGradient"
   >
   </ngx-charts-pie-chart>
 </div>

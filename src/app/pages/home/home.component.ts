@@ -6,7 +6,7 @@ import { OlympicService } from 'src/app/core/services/olympic.service';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
+  styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
   public olympics$: Observable<any> = of(null);
@@ -22,7 +22,7 @@ export class HomeComponent implements OnInit {
 
   // colors
   public colorScheme: any = {
-    domain: ['#A66870', '#8B415D', '#90ACE2', '#A48AAC', '#C1E5F4','#BDD2EB' ]
+    domain: ['#A66870', '#8B415D', '#90ACE2', '#A48AAC', '#C1E5F4', '#BDD2EB' ]
   };
 
   constructor(private olympicService: OlympicService) {}
@@ -37,7 +37,7 @@ export class HomeComponent implements OnInit {
    * @param olympics data of country in Olympics
    * @returns number of countries
    */
-  getNumberOfCountries(olympics: Olympic[]): number{
+  getNumberOfCountries(olympics: Olympic[]): number {
     return olympics.length;
   }
 
@@ -47,7 +47,7 @@ export class HomeComponent implements OnInit {
    * @returns number of JOs
    */
   getNumberOfJOs(olympics: Olympic[]): number {
-    return olympics.map(olympic => olympic.participations)[0].length;
+    return olympics.length > 0 ? olympics[0].participations.length : 0;
   }
 
   /**
