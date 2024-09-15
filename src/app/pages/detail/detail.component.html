@@ -1,0 +1,39 @@
+<div *ngIf="selectedCountryData as country" class="infos">
+    <h2 class="title">{{ country.country }}</h2>
+  
+    <div class="counts">
+      <div class="count">
+        <span class="titleCount">Number of entries</span>
+        <span class="numberCount">{{ getNumberOfEntries(country) }}</span>
+      </div>
+  
+      <div class="count">
+        <span class="titleCount">Total number of medals</span>
+        <span class="numberCount">{{ getNumberOfMedals(country) }}</span>
+      </div>
+  
+      <div class="count">
+        <span class="titleCount">Total number of athletes</span>
+        <span class="numberCount">{{ getNumberOfAthletes(country) }}</span>
+      </div>
+    </div>
+  
+    <ngx-charts-line-chart
+      [view]="view"
+      [scheme]="colorScheme"
+      [results]="getMedalsOverTime(country)"
+      [xAxis]="xAxis"
+      [yAxis]="yAxis"
+      [showXAxisLabel]="showXAxisLabel"
+      [showYAxisLabel]="showYAxisLabel"
+      [xAxisLabel]="xAxisLabel"
+      [yAxisLabel]="yAxisLabel"
+      [autoScale]="isAutoScale"
+      [animations]="isAnimations">
+    </ngx-charts-line-chart>
+
+    <button routerLink="/" routerLinkActive="active" ariaCurrentWhenActive="page" class="back">
+        Back to home
+    </button>
+  </div>
+  
