@@ -1,3 +1,34 @@
-<h2>Olympic games app</h2>
-<hr />
-<p>{{ (olympics$ | async)?.length }} data loaded</p>
+<div class="infos">
+  <h2>Medals per country</h2>
+
+  <div *ngIf="olympics$ | async as olympics" class="counts">
+    <div class="count">
+      <span class="titleCount">Number of JOs</span>
+      <span class="numberCount">{{ getNumberOfJOs(olympics)}}</span>
+    </div>
+    
+    <div class="count">
+      <span class="titleCount">Number of countries</span>
+      <span class="numberCount">{{ getNumberOfCountries(olympics)}}</span>
+    </div>
+  </div>
+</div>
+
+<!-- if data loaded, display graphic -->
+<div *ngIf="olympics$ | async as olympics" class="graphic">
+  <ngx-charts-pie-chart
+  [results]="getMedalsPerCountry(olympics)"
+  [view]="view"
+  [scheme]="colorScheme"
+  [legend]="showLegend"
+  [labels]="showLabels"
+  [animations]="showAnimation"
+  [explodeSlices]="isExplodeSlices"
+  [doughnut]="isDoughnut"
+  [gradient]="isGradient"
+  >
+  </ngx-charts-pie-chart>
+</div>
+
+<!-- if data not loaded or error, display "No data available" -->
+<p *ngIf="!(olympics$ | async)">No data available</p>
