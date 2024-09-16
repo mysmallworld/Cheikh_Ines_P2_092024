@@ -3,6 +3,7 @@ import { Observable, of } from 'rxjs';
 import { Olympic } from 'src/app/core/models/Olympic';
 import { Router } from '@angular/router';
 import { OlympicService } from 'src/app/core/services/olympic.service';
+import { Color } from '@swimlane/ngx-charts';
 
 @Component({
   selector: 'app-home',
@@ -10,9 +11,13 @@ import { OlympicService } from 'src/app/core/services/olympic.service';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  public olympics$: Observable<any> = of(null);
+  constructor(
+    private olympicService: OlympicService, 
+    private router: Router
+  ) {}
 
-  public selectedCountryData: Olympic | null = null;
+  olympics$: Observable<any> = of(null);
+  selectedCountryData: Olympic | null = null;
 
   // options
   view: [number, number] = [800, 400];
@@ -24,14 +29,10 @@ export class HomeComponent implements OnInit {
   isGradient: boolean = false;
 
   // colors
-  public colorScheme: any = {
-    domain: ['#A66870', '#8B415D', '#90ACE2', '#A48AAC', '#C1E5F4', '#BDD2EB'],
-  };
+  colorScheme: Color = {
+    domain: ['#A66870', '#8B415D', '#90ACE2', '#A48AAC', '#C1E5F4', '#BDD2EB']
+  } as Color;
 
-  constructor(
-    private olympicService: OlympicService, 
-    private router: Router
-  ) {}
 
   ngOnInit(): void {
     // Olympics data
@@ -75,12 +76,12 @@ export class HomeComponent implements OnInit {
    * Method to get data of selected country
    * @param event 
    */
-  getOlympicsByCountry(event: any): void {
+  getOlympicsByCountry(event: {name: string}): void {
     const selectedCountry = event.name;
 
     this.olympics$.subscribe((olympics) => {
       this.selectedCountryData = olympics.find(
-        (olympic: { country: any }) => olympic.country === selectedCountry
+        (olympic: { country: string }) => olympic.country === selectedCountry
       );
     });
 

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { Color, NgxChartsModule } from '@swimlane/ngx-charts';
 import { Observable, of } from 'rxjs';
 import { Olympic } from 'src/app/core/models/Olympic';
 import { OlympicService } from 'src/app/core/services/olympic.service';
@@ -13,8 +13,13 @@ import { OlympicService } from 'src/app/core/services/olympic.service';
   styleUrls: ['./detail.component.scss']
 })
 export class DetailComponent implements OnInit {
-  public olympics$: Observable<any> = of([]);
-  public selectedCountryData: Olympic | null = null;
+  constructor(
+    private olympicService: OlympicService,
+    private route: ActivatedRoute
+  ) {}
+
+  olympics$: Observable<any> = of([]);
+  selectedCountryData: Olympic | null = null;
 
   // Options
   view: [number, number] = [700, 300];
@@ -28,14 +33,9 @@ export class DetailComponent implements OnInit {
   isAnimations:boolean = false;
 
   // Colors
-  colorScheme: any = {
+  colorScheme: Color = {
     domain: ['#00919B']
-  };
-
-  constructor(
-    private olympicService: OlympicService,
-    private route: ActivatedRoute
-  ) {}
+  } as Color;
 
   ngOnInit(): void {
     // Olympics data
@@ -46,7 +46,7 @@ export class DetailComponent implements OnInit {
       const selectedCountry = params['country'];
       if (selectedCountry) {
         this.olympics$.subscribe((olympics) => {
-          this.selectedCountryData = olympics.find((olympic: { country: any; }) => olympic.country === selectedCountry) || null;
+          this.selectedCountryData = olympics.find((olympic: { country: string; }) => olympic.country === selectedCountry) || null;
         });
       }
     });
@@ -97,9 +97,8 @@ export class DetailComponent implements OnInit {
   /**
    * Method to get selected country
    */
-  onSelectCountry(event: any): void {
+  onSelectCountry(event: {name: string} ): void {
     const selectedCountry = event.name;
-    
     // Data of selected country
     this.olympics$.subscribe((olympics: Olympic[]) => {
       this.selectedCountryData = olympics.find(olympic => olympic.country === selectedCountry) || null;
