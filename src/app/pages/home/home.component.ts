@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Olympic } from 'src/app/core/models/Olympic';
 import { Router } from '@angular/router';
 import { OlympicService } from 'src/app/core/services/olympic.service';
@@ -16,8 +16,8 @@ export class HomeComponent implements OnInit {
     private router: Router
   ) {}
 
-  olympics$: Observable<any> = of(null);
-  selectedCountryData: Olympic | null = null;
+  olympics$!: Observable<any>;
+  selectedCountryData!: Olympic;
 
   // options
   view: [number, number] = [800, 400];
@@ -80,6 +80,7 @@ export class HomeComponent implements OnInit {
     const selectedCountry = event.name;
 
     this.olympics$.subscribe((olympics) => {
+      if(olympics) 
       this.selectedCountryData = olympics.find(
         (olympic: { country: string }) => olympic.country === selectedCountry
       );

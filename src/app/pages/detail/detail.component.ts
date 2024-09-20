@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Color, NgxChartsModule } from '@swimlane/ngx-charts';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Olympic } from 'src/app/core/models/Olympic';
 import { OlympicService } from 'src/app/core/services/olympic.service';
 
@@ -18,7 +18,7 @@ export class DetailComponent implements OnInit {
     private route: ActivatedRoute
   ) {}
 
-  olympics$: Observable<any> = of([]);
+  olympics$!: Observable<any>;
   selectedCountryData: Olympic | null = null;
 
   // Options
