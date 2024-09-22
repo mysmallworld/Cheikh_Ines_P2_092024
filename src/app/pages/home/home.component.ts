@@ -16,8 +16,8 @@ export class HomeComponent implements OnInit {
     private router: Router
   ) {}
 
-  olympics$!: Observable<any>;
-  selectedCountryData!: Olympic;
+  olympics$!: Observable<Olympic[] | undefined | null>;
+  selectedCountryData!: Olympic | undefined | null;
 
   // options
   view: [number, number] = [800, 400];

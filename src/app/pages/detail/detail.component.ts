@@ -18,7 +18,7 @@ export class DetailComponent implements OnInit {
     private route: ActivatedRoute
   ) {}
 
-  olympics$!: Observable<any>;
+  olympics$!: Observable<Olympic[] | undefined | null>;
   selectedCountryData: Olympic | null = null;
 
   // Options
@@ -27,7 +27,7 @@ export class DetailComponent implements OnInit {
   yAxis: boolean = true;
   showXAxisLabel: boolean = true;
   showYAxisLabel: boolean = true;
-  xAxisLabel: string = 'Year';
+  xAxisLabel: string = 'Dates';
   yAxisLabel: string = 'Medals';
   isAutoScale: boolean = true;
   isAnimations:boolean = false;
@@ -46,7 +46,7 @@ export class DetailComponent implements OnInit {
       const selectedCountry = params['country'];
       if (selectedCountry) {
         this.olympics$.subscribe((olympics) => {
-          this.selectedCountryData = olympics.find((olympic: { country: string; }) => olympic.country === selectedCountry) || null;
+          this.selectedCountryData = olympics?.find((olympic: { country: string; }) => olympic.country === selectedCountry) || null;
         });
       }
     });
@@ -96,12 +96,13 @@ export class DetailComponent implements OnInit {
 
   /**
    * Method to get selected country
+   * @param event 
    */
   onSelectCountry(event: {name: string} ): void {
     const selectedCountry = event.name;
     // Data of selected country
-    this.olympics$.subscribe((olympics: Olympic[]) => {
-      this.selectedCountryData = olympics.find(olympic => olympic.country === selectedCountry) || null;
+    this.olympics$.subscribe((olympics: Olympic[] | undefined | null) => {
+      this.selectedCountryData = olympics?.find(olympic => olympic.country === selectedCountry) || null;
     });
   }
 }
