@@ -22,7 +22,7 @@ export class DetailComponent implements OnInit {
   selectedCountryData: Olympic | null = null;
 
   // Options
-  view: [number, number] = [700, 300];
+  view: [number, number] = [500, 300];
   xAxis: boolean = true;
   yAxis: boolean = true;
   showXAxisLabel: boolean = true;

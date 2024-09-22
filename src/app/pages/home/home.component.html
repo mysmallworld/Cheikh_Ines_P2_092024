@@ -22,12 +22,20 @@
   [scheme]="colorScheme"
   [legend]="showLegend"
   [labels]="showLabels"
+  [maxLabelLength]="20"
   [animations]="showAnimation"
   [explodeSlices]="isExplodeSlices"
   [doughnut]="isDoughnut"
   [gradient]="isGradient"
   (select)="getOlympicsByCountry($event)" 
   >
+  <ng-template #tooltipTemplate let-model="model">
+    <div class="custom-tooltip">
+      <span>{{ model.name }} </span><br />
+      <i class="fa fa-solid fa-award"></i>
+      <span> {{ model.value }}</span>
+    </div>
+  </ng-template>
   </ngx-charts-pie-chart>
 </div>
 
