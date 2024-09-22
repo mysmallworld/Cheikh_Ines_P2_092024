@@ -34,7 +34,7 @@ export class DetailComponent implements OnInit {
 
   // Colors
   colorScheme: Color = {
-    domain: ['#00919B']
+    domain: ['#008591']
   } as Color;
 
   ngOnInit(): void {
