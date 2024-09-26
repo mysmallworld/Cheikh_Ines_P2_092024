@@ -4,11 +4,12 @@ import { Color, NgxChartsModule } from '@swimlane/ngx-charts';
 import { Observable } from 'rxjs';
 import { Olympic } from 'src/app/core/models/Olympic';
 import { OlympicService } from 'src/app/core/services/olympic.service';
+import { CountComponent } from "../count/count.component";
 
 @Component({
   selector: 'app-detail',
   standalone: true,
-  imports: [NgxChartsModule, RouterModule],
+  imports: [NgxChartsModule, RouterModule, CountComponent],
   templateUrl: './detail.component.html',
   styleUrls: ['./detail.component.scss']
 })

@@ -2,15 +2,15 @@
   <h2 class="title">Medals per country</h2>
 
   <div *ngIf="olympics$ | async as olympics" class="counts">
-    <div class="count">
-      <span class="titleCount">Number of JOs</span>
-      <span class="numberCount">{{ getNumberOfJOs(olympics)}}</span>
-    </div>
+    <app-count 
+      title="Number of JOs" 
+      [value]=getNumberOfJOs(olympics)>
+    </app-count>
     
-    <div class="count">
-      <span class="titleCount">Number of countries</span>
-      <span class="numberCount">{{ getNumberOfCountries(olympics)}}</span>
-    </div>
+    <app-count 
+      title="Number of countries" 
+      [value]=getNumberOfCountries(olympics)>
+    </app-count>
   </div>
 </div>
 
