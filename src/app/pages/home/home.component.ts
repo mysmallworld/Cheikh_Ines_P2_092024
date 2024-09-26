@@ -76,18 +76,22 @@ export class HomeComponent implements OnInit {
    * Method to get data of selected country
    * @param event 
    */
-  getOlympicsByCountry(event: {name: string}): void {
+  getOlympicsByCountry(event: { name: string }): void {
     const selectedCountry = event.name;
 
     this.olympics$.subscribe((olympics) => {
-      if(olympics) 
-      this.selectedCountryData = olympics.find(
-        (olympic: { country: string }) => olympic.country === selectedCountry
-      );
-    });
+      if (olympics) {
+        this.selectedCountryData = olympics.find(
+          (olympic: { country: string }) => olympic.country === selectedCountry
+        );
 
-    if (this.selectedCountryData) {
-      this.router.navigate(['/detail'], { queryParams: { country: selectedCountry } });
-    }
+        const idSelectedCountry = this.selectedCountryData?.id;
+
+        if (idSelectedCountry) {
+          this.router.navigate(['/detail'], { queryParams: { id: idSelectedCountry } });
+        }
+      }
+    });
   }
+
 }

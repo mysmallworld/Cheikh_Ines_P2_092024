@@ -40,17 +40,20 @@ export class DetailComponent implements OnInit {
   ngOnInit(): void {
     // Olympics data
     this.olympics$ = this.olympicService.getOlympics();
-
+  
     // Data of country selected
     this.route.queryParams.subscribe(params => {
-      const selectedCountry = params['country'];
-      if (selectedCountry) {
+      const idSelectedCountry = +params['id'];
+      if (idSelectedCountry) {
         this.olympics$.subscribe((olympics) => {
-          this.selectedCountryData = olympics?.find((olympic: { country: string; }) => olympic.country === selectedCountry) || null;
+          this.selectedCountryData = olympics?.find(
+            (olympic: { id: number }) => olympic.id === idSelectedCountry
+          ) || null;
         });
       }
     });
   }
+  
 
   /**
    * Method to get total number of entries of country selected
@@ -98,11 +101,11 @@ export class DetailComponent implements OnInit {
    * Method to get selected country
    * @param event 
    */
-  onSelectCountry(event: {name: string} ): void {
-    const selectedCountry = event.name;
+  onSelectCountry(event: {id: number} ): void {
+    const idSelectedCountry = event.id;
     // Data of selected country
     this.olympics$.subscribe((olympics: Olympic[] | undefined | null) => {
-      this.selectedCountryData = olympics?.find(olympic => olympic.country === selectedCountry) || null;
+      this.selectedCountryData = olympics?.find(olympic => olympic.id === idSelectedCountry) || null;
     });
   }
 }
