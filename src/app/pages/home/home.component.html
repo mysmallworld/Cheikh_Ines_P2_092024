@@ -1,7 +1,7 @@
-<div class="infos">
+<div *ngIf="olympics$ | async as olympics" class="infos">
   <h2 class="title">Medals per country</h2>
 
-  <div *ngIf="olympics$ | async as olympics" class="counts">
+  <div class="counts">
     <app-count 
       title="Number of JOs" 
       [value]=getNumberOfJOs(olympics)>
@@ -40,4 +40,4 @@
 </div>
 
 <!-- if data not loaded or error, display "No data available" -->
-<p *ngIf="!(olympics$ | async)">No data available</p>
+<p *ngIf="!(olympics$ | async)" class="noData">Oups... No data available</p>

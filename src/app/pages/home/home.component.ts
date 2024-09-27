@@ -12,7 +12,7 @@ import { Color } from '@swimlane/ngx-charts';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  private olympicsSubscription: Subscription = new Subscription();;
+  private olympicsSubscription: Subscription = new Subscription();
   constructor(
     private olympicService: OlympicService, 
     private router: Router
