@@ -24,5 +24,11 @@
 }
 
 .noData {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
+  font-weight: 100;
+  padding: 10px;
   text-align: center;
 }

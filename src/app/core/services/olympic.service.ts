@@ -16,12 +16,11 @@ export class OlympicService {
   loadInitialData() {
     return this.http.get<Olympic[]>(this.olympicUrl).pipe(
       tap((value) => this.olympics$.next(value)),
-        catchError((error, caught) => {
-        // TODO: improve error handling
-        console.error(error);
-        // can be useful to end loading state and let the user know something went wrong
+        catchError((error, caugth) => {
+        console.error('Error loading Olympics data:', error);
         this.olympics$.next(null);
-        return caught;
+        alert(`Une erreur est survenue lors du chargement des données.\nStatus de l'erreur : ${error.status}.\nType de l'erreur : ${error.statusText}.\nVeuillez réessayer plus tard.`);
+        return caugth;
       })
     );
   }
