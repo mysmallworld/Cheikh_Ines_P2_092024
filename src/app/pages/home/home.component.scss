@@ -32,3 +32,15 @@
   padding: 10px;
   text-align: center;
 }
+
+@media only screen and (min-width: 600px) and (max-width: 1024px) {
+  ::ng-deep .ngx-charts .pie-label {
+      font-size: 16px;
+  }
+  }
+  
+  @media only screen and (min-width: 1025px) {
+    ::ng-deep .ngx-charts .pie-label {
+      font-size: 20px;
+  }
+  }
