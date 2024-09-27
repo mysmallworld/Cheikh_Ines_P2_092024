@@ -1,21 +1,24 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Color, NgxChartsModule } from '@swimlane/ngx-charts';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Olympic } from 'src/app/core/models/Olympic';
 import { OlympicService } from 'src/app/core/services/olympic.service';
+import { CountComponent } from '../count/count.component';
 
 @Component({
   selector: 'app-detail',
   standalone: true,
-  imports: [NgxChartsModule, RouterModule],
+  imports: [NgxChartsModule, RouterModule, CountComponent],
   templateUrl: './detail.component.html',
   styleUrls: ['./detail.component.scss']
 })
-export class DetailComponent implements OnInit {
+export class DetailComponent implements OnInit, OnDestroy {
+  private Olympicsubscriptions: Subscription = new Subscription();
   constructor(
     private olympicService: OlympicService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   olympics$!: Observable<Olympic[] | undefined | null>;
@@ -30,7 +33,7 @@ export class DetailComponent implements OnInit {
   xAxisLabel: string = 'Dates';
   yAxisLabel: string = 'Medals';
   isAutoScale: boolean = true;
-  isAnimations:boolean = false;
+  isAnimations: boolean = false;
 
   // Colors
   colorScheme: Color = {
@@ -40,21 +43,33 @@ export class DetailComponent implements OnInit {
   ngOnInit(): void {
     // Olympics data
     this.olympics$ = this.olympicService.getOlympics();
-
-    // Data of country selected
-    this.route.queryParams.subscribe(params => {
-      const selectedCountry = params['country'];
-      if (selectedCountry) {
+  
+    this.Olympicsubscriptions.add(
+      this.route.queryParams.subscribe((params) => {
+        const idSelectedCountry = +params['id'];
+  
         this.olympics$.subscribe((olympics) => {
-          this.selectedCountryData = olympics?.find((olympic: { country: string; }) => olympic.country === selectedCountry) || null;
+          if (isNaN(idSelectedCountry) || idSelectedCountry < 1 || !olympics?.some(olympic => olympic.id === idSelectedCountry)) {
+            console.log('ID inconnu ou invalide, redirection...');
+            this.router.navigate(['/unknown-page']);
+          } else {
+            this.selectedCountryData = olympics?.find(
+              (olympic: { id: number }) => olympic.id === idSelectedCountry
+            ) || null;
+          }
         });
-      }
-    });
+      })
+    );
+  }
+  
+
+  ngOnDestroy(): void {
+    this.Olympicsubscriptions.unsubscribe();
   }
 
   /**
    * Method to get total number of entries of country selected
-   * @param olympics data of country in Olympics
+   * @param olympic data of country in Olympics
    * @returns total number of entries
    */
   getNumberOfEntries(olympic: Olympic): number {
@@ -63,20 +78,26 @@ export class DetailComponent implements OnInit {
 
   /**
    * Method to get total number of medals of country selected
-   * @param olympics data of country in Olympics
+   * @param olympic data of country in Olympics
    * @returns total number of medals
    */
   getNumberOfMedals(olympic: Olympic): number {
-    return olympic.participations.reduce((total, participation) => total + participation.medalsCount, 0);
+    return olympic.participations.reduce(
+      (total, participation) => total + participation.medalsCount,
+      0
+    );
   }
 
   /**
    * Method to get total number of athletes of country selected
-   * @param olympics data of country in Olympics
+   * @param olympic data of country in Olympics
    * @returns total number of athletes
    */
   getNumberOfAthletes(olympic: Olympic): number {
-    return olympic.participations.reduce((total, participation) => total + participation.athleteCount, 0);
+    return olympic.participations.reduce(
+      (total, participation) => total + participation.athleteCount,
+      0
+    );
   }
 
   /**
@@ -84,25 +105,44 @@ export class DetailComponent implements OnInit {
    * @param olympic data of country in Olympics
    * @returns number of medals by year
    */
-  getMedalsOverTime(olympic: Olympic): { name: string, series: { name: string, value: number }[] }[] {
-    return [{
-      name: olympic.country,
-      series: olympic.participations.map(participation => ({
-        name: participation.year.toString(),
-        value: participation.medalsCount
-      }))
-    }];
+  getMedalsOverTime(
+    olympic: Olympic
+  ): { name: string; series: { name: string; value: number }[] }[] {
+    return [
+      {
+        name: olympic.country,
+        series: olympic.participations.map((participation) => ({
+          name: participation.year.toString(),
+          value: participation.medalsCount,
+        })),
+      },
+    ];
   }
 
   /**
-   * Method to get selected country
-   * @param event 
-   */
-  onSelectCountry(event: {name: string} ): void {
-    const selectedCountry = event.name;
-    // Data of selected country
+ * Method to get selected country
+ * @param event
+ */
+onSelectCountry(event: { id: number }): void {
+  const idSelectedCountry = event.id;
+  // Data of selected country
+  this.Olympicsubscriptions.add(
     this.olympics$.subscribe((olympics: Olympic[] | undefined | null) => {
-      this.selectedCountryData = olympics?.find(olympic => olympic.country === selectedCountry) || null;
-    });
-  }
+      this.selectedCountryData =
+        olympics?.find((olympic) => olympic.id === idSelectedCountry) || null;
+
+      this.route.queryParams.subscribe((params) => {
+        const idParams = +params['id'];  // Conversion en nombre avec le "+" devant params['id']
+
+        if (isNaN(idParams) || idParams < 1 || !olympics?.some(olympic => olympic.id === idParams)) {
+          console.log('ID inconnu ou invalide, redirection...');
+          this.router.navigate(['/unknown-page']);
+        } else {
+          console.log(`ID valide : ${idParams}`);
+        }
+      });
+    })
+  );
+}
+
 }

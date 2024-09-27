@@ -2,20 +2,20 @@
   <h2 class="title">{{ country.country }}</h2>
 
   <div class="counts">
-    <div class="count">
-      <span class="titleCount">Number of entries</span>
-      <span class="numberCount">{{ getNumberOfEntries(country) }}</span>
-    </div>
+    <app-count 
+      title="Number of entries" 
+      [value]=getNumberOfEntries(country)>
+    </app-count>
 
-    <div class="count">
-      <span class="titleCount">Total number of medals</span>
-      <span class="numberCount">{{ getNumberOfMedals(country) }}</span>
-    </div>
+    <app-count 
+      title="Total number of medals" 
+      [value]=getNumberOfMedals(country)>
+    </app-count>
 
-    <div class="count">
-      <span class="titleCount">Total number of athletes</span>
-      <span class="numberCount">{{ getNumberOfAthletes(country) }}</span>
-    </div>
+    <app-count 
+      title="Total number of athletes" 
+      [value]=getNumberOfAthletes(country)>
+    </app-count>
   </div>
 
   <div class="graphic">

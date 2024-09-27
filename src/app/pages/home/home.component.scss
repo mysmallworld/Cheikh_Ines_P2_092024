@@ -1,33 +1,28 @@
 // Pie chart appearance
 ::ng-deep .ngx-charts {
-    text {
-      fill: #030303 !important;
-      font-family: "Lato", sans-serif;
-      font-weight: 300 !important;
-      width: 50% !important;
-      height: 100% !important;
-    }
-  }
-  
-  // Legend appearance
-  ::ng-deep .legend-label-text {
+  text {
+    fill: #030303 !important;
     font-family: "Lato", sans-serif;
     font-weight: 300 !important;
+    width: 100% !important;
+    height: 100% !important;
   }
-  
-  // Tooltip appearance
-  ::ng-deep .ngx-charts-tooltip-content {
-    background-color: #008591 !important;
-    color: #fff !important;
-    font-family: "Lato", sans-serif;
-    font-weight: 300 !important;
-    padding: 5px 12px 5px 12px !important;
-    border-radius: 5px !important;
-  }
-  
-  // Toast warning appearance
-  ::ng-deep #toast-container {
-    font-family: "Lato", sans-serif;
-    font-weight: 300 !important;
-    text-align: center !important;
-  } 
+}
+
+//::ng-deep .ngx-charts .pie-label {
+  //transform-origin: center;
+//}
+
+// Tooltip appearance
+::ng-deep .ngx-charts-tooltip-content {
+  background-color: #008591 !important;
+  color: #fff !important;
+  font-family: "Lato", sans-serif;
+  font-weight: 300 !important;
+  padding: 5px 12px 5px 12px !important;
+  border-radius: 5px !important;
+}
+
+.noData {
+  text-align: center;
+}

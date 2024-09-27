@@ -7,10 +7,11 @@ import { HomeComponent } from './pages/home/home.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { CountComponent } from "./pages/count/count.component";
 
 @NgModule({
   declarations: [AppComponent, HomeComponent, NotFoundComponent],
-  imports: [BrowserModule, AppRoutingModule, HttpClientModule, NgxChartsModule, NoopAnimationsModule],
+  imports: [BrowserModule, AppRoutingModule, HttpClientModule, NgxChartsModule, NoopAnimationsModule, CountComponent],
   providers: [],
   bootstrap: [AppComponent],
 })
