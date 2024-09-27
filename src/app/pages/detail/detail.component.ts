@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Color, NgxChartsModule } from '@swimlane/ngx-charts';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Olympic } from 'src/app/core/models/Olympic';
 import { OlympicService } from 'src/app/core/services/olympic.service';
 import { CountComponent } from "../count/count.component";
@@ -13,12 +13,8 @@ import { CountComponent } from "../count/count.component";
   templateUrl: './detail.component.html',
   styleUrls: ['./detail.component.scss']
 })
-export class DetailComponent implements OnInit {
-  constructor(
-    private olympicService: OlympicService,
-    private route: ActivatedRoute
-  ) {}
-
+export class DetailComponent implements OnInit, OnDestroy {
+  private Olympicsubscriptions: Subscription = new Subscription();
   olympics$!: Observable<Olympic[] | undefined | null>;
   selectedCountryData: Olympic | null = null;
 
@@ -31,34 +27,46 @@ export class DetailComponent implements OnInit {
   xAxisLabel: string = 'Dates';
   yAxisLabel: string = 'Medals';
   isAutoScale: boolean = true;
-  isAnimations:boolean = false;
+  isAnimations: boolean = false;
 
   // Colors
   colorScheme: Color = {
     domain: ['#008591']
   } as Color;
 
+  constructor(
+    private olympicService: OlympicService,
+    private route: ActivatedRoute
+  ) {}
+
   ngOnInit(): void {
     // Olympics data
     this.olympics$ = this.olympicService.getOlympics();
-  
-    // Data of country selected
-    this.route.queryParams.subscribe(params => {
-      const idSelectedCountry = +params['id'];
-      if (idSelectedCountry) {
-        this.olympics$.subscribe((olympics) => {
-          this.selectedCountryData = olympics?.find(
-            (olympic: { id: number }) => olympic.id === idSelectedCountry
-          ) || null;
-        });
-      }
-    });
+
+    // Subscribe to route query parameters
+    this.Olympicsubscriptions.add(
+      this.route.queryParams.subscribe(params => {
+        const idSelectedCountry = +params['id'];
+        if (idSelectedCountry) {
+          this.Olympicsubscriptions.add(
+            this.olympics$.subscribe((olympics) => {
+              this.selectedCountryData = olympics?.find(
+                (olympic: { id: number }) => olympic.id === idSelectedCountry
+              ) || null;
+            })
+          );
+        }
+      })
+    );
   }
-  
+
+  ngOnDestroy(): void {
+    this.Olympicsubscriptions.unsubscribe();
+  }
 
   /**
    * Method to get total number of entries of country selected
-   * @param olympics data of country in Olympics
+   * @param olympic data of country in Olympics
    * @returns total number of entries
    */
   getNumberOfEntries(olympic: Olympic): number {
@@ -67,7 +75,7 @@ export class DetailComponent implements OnInit {
 
   /**
    * Method to get total number of medals of country selected
-   * @param olympics data of country in Olympics
+   * @param olympic data of country in Olympics
    * @returns total number of medals
    */
   getNumberOfMedals(olympic: Olympic): number {
@@ -76,7 +84,7 @@ export class DetailComponent implements OnInit {
 
   /**
    * Method to get total number of athletes of country selected
-   * @param olympics data of country in Olympics
+   * @param olympic data of country in Olympics
    * @returns total number of athletes
    */
   getNumberOfAthletes(olympic: Olympic): number {
@@ -102,11 +110,13 @@ export class DetailComponent implements OnInit {
    * Method to get selected country
    * @param event 
    */
-  onSelectCountry(event: {id: number} ): void {
+  onSelectCountry(event: { id: number }): void {
     const idSelectedCountry = event.id;
     // Data of selected country
-    this.olympics$.subscribe((olympics: Olympic[] | undefined | null) => {
-      this.selectedCountryData = olympics?.find(olympic => olympic.id === idSelectedCountry) || null;
-    });
+    this.Olympicsubscriptions.add(
+      this.olympics$.subscribe((olympics: Olympic[] | undefined | null) => {
+        this.selectedCountryData = olympics?.find(olympic => olympic.id === idSelectedCountry) || null;
+      })
+    );
   }
 }

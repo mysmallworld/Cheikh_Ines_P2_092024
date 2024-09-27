@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { Observable } from 'rxjs';
 import { Olympic } from 'src/app/core/models/Olympic';
 import { Router } from '@angular/router';
@@ -10,7 +11,8 @@ import { Color } from '@swimlane/ngx-charts';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
+  private olympicsSubscription: Subscription = new Subscription();;
   constructor(
     private olympicService: OlympicService, 
     private router: Router
@@ -37,6 +39,10 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     // Olympics data
     this.olympics$ = this.olympicService.getOlympics();
+  }
+
+  ngOnDestroy(): void {
+      this.olympicsSubscription.unsubscribe();
   }
 
   /**
@@ -79,7 +85,7 @@ export class HomeComponent implements OnInit {
   getOlympicsByCountry(event: { name: string }): void {
     const selectedCountry = event.name;
 
-    this.olympics$.subscribe((olympics) => {
+    this.olympicsSubscription = this.olympics$.subscribe((olympics) => {
       if (olympics) {
         this.selectedCountryData = olympics.find(
           (olympic: { country: string }) => olympic.country === selectedCountry
