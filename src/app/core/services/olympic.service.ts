@@ -19,7 +19,7 @@ export class OlympicService {
         catchError((error, caugth) => {
         console.error('Error loading Olympics data:', error);
         this.olympics$.next(null);
-        alert(`Une erreur est survenue lors du chargement des données.\nStatus de l'erreur : ${error.status}.\nType de l'erreur : ${error.statusText}.\nVeuillez réessayer plus tard.`);
+        alert(`An error occurred while loading data.\nError status: ${error.status}.\nError type: ${error.statusText}.\nPlease try again later.`);
         return caugth;
       })
     );

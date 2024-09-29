@@ -19,7 +19,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   ) {}
 
   olympics$!: Observable<Olympic[] | undefined | null>;
-  selectedCountryData!: Olympic | undefined | null;
+  countryData!: Olympic | undefined | null;
 
   // options
   view: [number, number] = [800, 400];
@@ -87,11 +87,11 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     this.olympicsSubscription = this.olympics$.subscribe((olympics) => {
       if (olympics) {
-        this.selectedCountryData = olympics.find(
+        this.countryData = olympics.find(
           (olympic: { country: string }) => olympic.country === selectedCountry
         );
 
-        const idSelectedCountry = this.selectedCountryData?.id;
+        const idSelectedCountry = this.countryData?.id;
 
         if (idSelectedCountry) {
           this.router.navigate(['/detail'], { queryParams: { id: idSelectedCountry } });

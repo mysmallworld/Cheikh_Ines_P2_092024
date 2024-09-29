@@ -2,15 +2,8 @@
   <h2 class="title">Medals per country</h2>
 
   <div class="counts">
-    <app-count 
-      title="Number of JOs" 
-      [value]=getNumberOfJOs(olympics)>
-    </app-count>
-    
-    <app-count 
-      title="Number of countries" 
-      [value]=getNumberOfCountries(olympics)>
-    </app-count>
+    <app-count title="Number of JOs" [value]=getNumberOfJOs(olympics)></app-count>
+    <app-count title="Number of countries" [value]=getNumberOfCountries(olympics)></app-count>
   </div>
 </div>
 
@@ -27,8 +20,8 @@
   [explodeSlices]="isExplodeSlices"
   [doughnut]="isDoughnut"
   [gradient]="isGradient"
-  (select)="getOlympicsByCountry($event)" 
-  >
+  (select)="getOlympicsByCountry($event)">
+
   <ng-template #tooltipTemplate let-model="model">
     <div class="custom-tooltip">
       <span>{{ model.name }} </span><br />
@@ -36,6 +29,7 @@
       <span> {{ model.value }}</span>
     </div>
   </ng-template>
+  
   </ngx-charts-pie-chart>
 </div>
 

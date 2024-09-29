@@ -22,7 +22,7 @@ export class DetailComponent implements OnInit, OnDestroy {
   ) {}
 
   olympics$!: Observable<Olympic[] | undefined | null>;
-  selectedCountryData: Olympic | null = null;
+  countryData: Olympic | null = null;
 
   // Options
   view: [number, number] = [500, 300];
@@ -50,10 +50,9 @@ export class DetailComponent implements OnInit, OnDestroy {
   
         this.olympics$.subscribe((olympics) => {
           if (isNaN(idSelectedCountry) || idSelectedCountry < 1 || !olympics?.some(olympic => olympic.id === idSelectedCountry)) {
-            console.log('ID inconnu ou invalide, redirection...');
             this.router.navigate(['/unknown-page']);
           } else {
-            this.selectedCountryData = olympics?.find(
+            this.countryData = olympics?.find(
               (olympic: { id: number }) => olympic.id === idSelectedCountry
             ) || null;
           }
@@ -62,7 +61,6 @@ export class DetailComponent implements OnInit, OnDestroy {
     );
   }
   
-
   ngOnDestroy(): void {
     this.Olympicsubscriptions.unsubscribe();
   }
@@ -128,17 +126,14 @@ onSelectCountry(event: { id: number }): void {
   // Data of selected country
   this.Olympicsubscriptions.add(
     this.olympics$.subscribe((olympics: Olympic[] | undefined | null) => {
-      this.selectedCountryData =
+      this.countryData =
         olympics?.find((olympic) => olympic.id === idSelectedCountry) || null;
 
       this.route.queryParams.subscribe((params) => {
         const idParams = +params['id'];  // Conversion en nombre avec le "+" devant params['id']
 
         if (isNaN(idParams) || idParams < 1 || !olympics?.some(olympic => olympic.id === idParams)) {
-          console.log('ID inconnu ou invalide, redirection...');
           this.router.navigate(['/unknown-page']);
-        } else {
-          console.log(`ID valide : ${idParams}`);
         }
       });
     })
