@@ -13,10 +13,7 @@ import { Color } from '@swimlane/ngx-charts';
 })
 export class HomeComponent implements OnInit, OnDestroy {
   private olympicsSubscription: Subscription = new Subscription();
-  constructor(
-    private olympicService: OlympicService, 
-    private router: Router
-  ) {}
+  constructor(private olympicService: OlympicService, private router: Router) {}
 
   olympics$!: Observable<Olympic[] | undefined | null>;
   countryData!: Olympic | undefined | null;
@@ -32,9 +29,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   // colors
   colorScheme: Color = {
-    domain: ['#A66870', '#8B415D', '#90ACE2', '#A48AAC', '#C1E5F4', '#BDD2EB']
+    domain: ['#A66870', '#8B415D', '#90ACE2', '#A48AAC', '#C1E5F4', '#BDD2EB'],
   } as Color;
-
 
   ngOnInit(): void {
     // Olympics data
@@ -42,7 +38,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-      this.olympicsSubscription.unsubscribe();
+    this.olympicsSubscription.unsubscribe();
   }
 
   /**
@@ -51,7 +47,7 @@ export class HomeComponent implements OnInit, OnDestroy {
    * @returns number of countries
    */
   getNumberOfCountries(olympics: Olympic[]): number {
-    return olympics.length;
+    return this.olympicService.getNumberOfCountries(olympics);
   }
 
   /**
@@ -60,7 +56,7 @@ export class HomeComponent implements OnInit, OnDestroy {
    * @returns number of JOs
    */
   getNumberOfJOs(olympics: Olympic[]): number {
-    return olympics.length > 0 ? olympics[0].participations.length : 0;
+    return this.olympicService.getNumberOfJOs(olympics);
   }
 
   /**
@@ -69,35 +65,14 @@ export class HomeComponent implements OnInit, OnDestroy {
    * @returns total medals count per country
    */
   getMedalsPerCountry(olympics: Olympic[]): { name: string; value: number }[] {
-    return olympics.map((olympic) => ({
-      name: olympic.country,
-      value: olympic.participations.reduce(
-        (total, participation) => total + participation.medalsCount,
-        0
-      ),
-    }));
+    return this.olympicService.getMedalsPerCountry(olympics);
   }
 
   /**
    * Method to get data of selected country
-   * @param event 
+   * @param event
    */
   getOlympicsByCountry(event: { name: string }): void {
-    const selectedCountry = event.name;
-
-    this.olympicsSubscription = this.olympics$.subscribe((olympics) => {
-      if (olympics) {
-        this.countryData = olympics.find(
-          (olympic: { country: string }) => olympic.country === selectedCountry
-        );
-
-        const idSelectedCountry = this.countryData?.id;
-
-        if (idSelectedCountry) {
-          this.router.navigate(['/detail'], { queryParams: { id: idSelectedCountry } });
-        }
-      }
-    });
+    return this.olympicService.getOlympicsByCountry(event, this.olympicsSubscription, this.olympics$, this.router, this.countryData);
   }
-
 }

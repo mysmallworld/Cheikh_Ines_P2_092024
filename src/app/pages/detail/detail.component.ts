@@ -11,7 +11,7 @@ import { CountComponent } from '../count/count.component';
   standalone: true,
   imports: [NgxChartsModule, RouterModule, CountComponent],
   templateUrl: './detail.component.html',
-  styleUrls: ['./detail.component.scss']
+  styleUrls: ['./detail.component.scss'],
 })
 export class DetailComponent implements OnInit, OnDestroy {
   private Olympicsubscriptions: Subscription = new Subscription();
@@ -37,7 +37,7 @@ export class DetailComponent implements OnInit, OnDestroy {
 
   // Colors
   colorScheme: Color = {
-    domain: ['#008591']
+    domain: ['#008591'],
   } as Color;
 
   ngOnInit(): void {
@@ -60,7 +60,7 @@ export class DetailComponent implements OnInit, OnDestroy {
       })
     );
   }
-  
+
   ngOnDestroy(): void {
     this.Olympicsubscriptions.unsubscribe();
   }
@@ -71,7 +71,7 @@ export class DetailComponent implements OnInit, OnDestroy {
    * @returns total number of entries
    */
   getNumberOfEntries(olympic: Olympic): number {
-    return olympic.participations.length;
+    return this.olympicService.getNumberOfEntries(olympic);
   }
 
   /**
@@ -80,10 +80,7 @@ export class DetailComponent implements OnInit, OnDestroy {
    * @returns total number of medals
    */
   getNumberOfMedals(olympic: Olympic): number {
-    return olympic.participations.reduce(
-      (total, participation) => total + participation.medalsCount,
-      0
-    );
+    return this.olympicService.getNumberOfMedals(olympic);
   }
 
   /**
@@ -92,10 +89,7 @@ export class DetailComponent implements OnInit, OnDestroy {
    * @returns total number of athletes
    */
   getNumberOfAthletes(olympic: Olympic): number {
-    return olympic.participations.reduce(
-      (total, participation) => total + participation.athleteCount,
-      0
-    );
+    return this.olympicService.getNumberOfAthletes(olympic);
   }
 
   /**
@@ -103,41 +97,15 @@ export class DetailComponent implements OnInit, OnDestroy {
    * @param olympic data of country in Olympics
    * @returns number of medals by year
    */
-  getMedalsOverTime(
-    olympic: Olympic
-  ): { name: string; series: { name: string; value: number }[] }[] {
-    return [
-      {
-        name: olympic.country,
-        series: olympic.participations.map((participation) => ({
-          name: participation.year.toString(),
-          value: participation.medalsCount,
-        })),
-      },
-    ];
+  getMedalsOverTime(olympic: Olympic): { name: string; series: { name: string; value: number }[] }[] {
+    return this.olympicService.getMedalsOverTime(olympic);
   }
 
   /**
- * Method to get selected country
- * @param event
- */
-onSelectCountry(event: { id: number }): void {
-  const idSelectedCountry = event.id;
-  // Data of selected country
-  this.Olympicsubscriptions.add(
-    this.olympics$.subscribe((olympics: Olympic[] | undefined | null) => {
-      this.countryData =
-        olympics?.find((olympic) => olympic.id === idSelectedCountry) || null;
-
-      this.route.queryParams.subscribe((params) => {
-        const idParams = +params['id'];  // Conversion en nombre avec le "+" devant params['id']
-
-        if (isNaN(idParams) || idParams < 1 || !olympics?.some(olympic => olympic.id === idParams)) {
-          this.router.navigate(['/unknown-page']);
-        }
-      });
-    })
-  );
-}
-
+   * Method to get selected country
+   * @param event
+   */
+  onSelectCountry(event: { id: number }): void {
+    return this.olympicService.onSelectCountry(event, this.Olympicsubscriptions, this.olympics$, this.route, this.router, this.countryData);
+  }
 }
