@@ -10,17 +10,17 @@ const routes: Routes = [
     component: HomeComponent,
   },
   {
-    path: 'detail',
+    path: 'detail/:id',
     component: DetailComponent,
   },
   {
     path: '**',
     component: NotFoundComponent,
-  },
+  }
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule],
+  exports: [RouterModule]
 })
 export class AppRoutingModule {}

@@ -2,9 +2,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Observable } from 'rxjs';
 import { Olympic } from 'src/app/core/models/Olympic';
-import { Router } from '@angular/router';
 import { OlympicService } from 'src/app/core/services/olympic.service';
 import { Color } from '@swimlane/ngx-charts';
+import { Country } from 'src/app/core/models/Country';
 
 @Component({
   selector: 'app-home',
@@ -13,10 +13,10 @@ import { Color } from '@swimlane/ngx-charts';
 })
 export class HomeComponent implements OnInit, OnDestroy {
   private olympicsSubscription: Subscription = new Subscription();
-  constructor(private olympicService: OlympicService, private router: Router) {}
+  constructor(private olympicService: OlympicService) {}
 
   olympics$!: Observable<Olympic[] | undefined | null>;
-  countryData!: Olympic | undefined | null;
+  countryData!: Olympic | undefined | null; 
 
   // options
   view: [number, number] = [800, 400];
@@ -42,37 +42,37 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Method to get number of countries
-   * @param olympics data of country in Olympics
-   * @returns number of countries
+   * Method to get number of countries.
+   * @param olympics data of country in Olympics.
+   * @returns number of countries.
    */
   getNumberOfCountries(olympics: Olympic[]): number {
     return this.olympicService.getNumberOfCountries(olympics);
   }
 
   /**
-   * Method to get number of JOs
-   * @param olympics data of country in Olympics
-   * @returns number of JOs
+   * Method to get number of JOs.
+   * @param olympics data of country in Olympics.
+   * @returns number of JOs.
    */
   getNumberOfJOs(olympics: Olympic[]): number {
     return this.olympicService.getNumberOfJOs(olympics);
   }
 
   /**
-   * Method to get medals per country
-   * @param olympics data of country in Olympics
-   * @returns total medals count per country
+   * Method to get medals per country.
+   * @param olympics data of country in Olympics.
+   * @returns total medals count per country.
    */
-  getMedalsPerCountry(olympics: Olympic[]): { name: string; value: number }[] {
+  getMedalsPerCountry(olympics: Olympic[]): Country[] {
     return this.olympicService.getMedalsPerCountry(olympics);
   }
 
   /**
-   * Method to get data of selected country
-   * @param event
+   * Method to get data of selected country.
+   * @param event Country.
    */
-  getOlympicsByCountry(event: { name: string }): void {
-    return this.olympicService.getOlympicsByCountry(event, this.olympicsSubscription, this.olympics$, this.router, this.countryData);
+  getOlympicsByCountry(event: Country): void {
+    return this.olympicService.getOlympicsByCountry(event, this.olympics$, this.countryData);
   }
 }
