@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router, RouterModule } from '@angular/router';
 import { Color, NgxChartsModule } from '@swimlane/ngx-charts';
-import { Observable, Subscription } from 'rxjs';
+import { map, Observable, Subscription, switchMap, timeout } from 'rxjs';
 import { Olympic } from 'src/app/core/models/Olympic';
 import { OlympicService } from 'src/app/core/services/olympic.service';
 import { CountComponent } from '../count/count.component';
+import { Country } from 'src/app/core/models/Country';
 
 @Component({
   selector: 'app-detail',
@@ -41,71 +42,68 @@ export class DetailComponent implements OnInit, OnDestroy {
   } as Color;
 
   ngOnInit(): void {
-    // Olympics data
+    // Olympic Data
     this.olympics$ = this.olympicService.getOlympics();
-  
+
     this.Olympicsubscriptions.add(
-      this.route.queryParams.subscribe((params) => {
-        const idSelectedCountry = +params['id'];
-  
-        this.olympics$.subscribe((olympics) => {
-          if (isNaN(idSelectedCountry) || idSelectedCountry < 1 || !olympics?.some(olympic => olympic.id === idSelectedCountry)) {
-            this.router.navigate(['/unknown-page']);
-          } else {
-            this.countryData = olympics?.find(
-              (olympic: { id: number }) => olympic.id === idSelectedCountry
-            ) || null;
-          }
-        });
+      this.route.paramMap.pipe(
+        switchMap((params: ParamMap) => {
+          const idSelectedCountry = +params.get('id')!;
+          return this.olympics$.pipe(
+            map((olympics) => {
+              const countryData = olympics?.find(
+                (olympic: { id: number }) => olympic.id === idSelectedCountry
+              ) || null;
+              return countryData;
+            })
+          );
+        })
+      ).subscribe((countryData) => {
+        this.countryData = countryData;
+        if (!countryData) {
+          this.router.navigate(['/unknown-page']);
+        }
       })
     );
-  }
+  }   
 
   ngOnDestroy(): void {
     this.Olympicsubscriptions.unsubscribe();
   }
 
   /**
-   * Method to get total number of entries of country selected
-   * @param olympic data of country in Olympics
-   * @returns total number of entries
+   * Method to get total number of entries of country selected.
+   * @param olympic data of country in Olympics.
+   * @returns total number of entries.
    */
   getNumberOfEntries(olympic: Olympic): number {
     return this.olympicService.getNumberOfEntries(olympic);
   }
 
   /**
-   * Method to get total number of medals of country selected
-   * @param olympic data of country in Olympics
-   * @returns total number of medals
+   * Method to get total number of medals of country selected.
+   * @param olympic data of country in Olympics.
+   * @returns total number of medals.
    */
   getNumberOfMedals(olympic: Olympic): number {
     return this.olympicService.getNumberOfMedals(olympic);
   }
 
   /**
-   * Method to get total number of athletes of country selected
-   * @param olympic data of country in Olympics
-   * @returns total number of athletes
+   * Method to get total number of athletes of country selected.
+   * @param olympic data of country in Olympics.
+   * @returns total number of athletes.
    */
   getNumberOfAthletes(olympic: Olympic): number {
     return this.olympicService.getNumberOfAthletes(olympic);
   }
 
   /**
-   * Method to get number medals by year
-   * @param olympic data of country in Olympics
-   * @returns number of medals by year
+   * Method to get number medals by year.
+   * @param olympic data of country in Olympics.
+   * @returns number of medals by year.
    */
-  getMedalsOverTime(olympic: Olympic): { name: string; series: { name: string; value: number }[] }[] {
+  getMedalsOverTime(olympic: Olympic): Country[] {
     return this.olympicService.getMedalsOverTime(olympic);
-  }
-
-  /**
-   * Method to get selected country
-   * @param event
-   */
-  onSelectCountry(event: { id: number }): void {
-    return this.olympicService.onSelectCountry(event, this.Olympicsubscriptions, this.olympics$, this.route, this.router, this.countryData);
   }
 }
