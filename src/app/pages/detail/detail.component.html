@@ -1,28 +1,17 @@
-<div *ngIf="selectedCountryData as country" class="infos">
-  <h2 class="title">{{ country.country }}</h2>
+<div *ngIf="countryData" class="infos">
+  <h2 class="title">{{ countryData.country }}</h2>
 
   <div class="counts">
-    <app-count 
-      title="Number of entries" 
-      [value]=getNumberOfEntries(country)>
-    </app-count>
-
-    <app-count 
-      title="Total number of medals" 
-      [value]=getNumberOfMedals(country)>
-    </app-count>
-
-    <app-count 
-      title="Total number of athletes" 
-      [value]=getNumberOfAthletes(country)>
-    </app-count>
+    <app-count title="Number of entries" [value]=getNumberOfEntries(countryData)></app-count>
+    <app-count title="Total number of medals" [value]=getNumberOfMedals(countryData)></app-count>
+    <app-count title="Total number of athletes" [value]=getNumberOfAthletes(countryData)></app-count>
   </div>
 
   <div class="graphic">
     <ngx-charts-line-chart
       [view]="view"
       [scheme]="colorScheme"
-      [results]="getMedalsOverTime(country)"
+      [results]="getMedalsOverTime(countryData)"
       [xAxis]="xAxis"
       [yAxis]="yAxis"
       [showXAxisLabel]="showXAxisLabel"
@@ -30,17 +19,11 @@
       [xAxisLabel]="xAxisLabel"
       [yAxisLabel]="yAxisLabel"
       [autoScale]="isAutoScale"
-      [animations]="isAnimations"
-    >
+      [animations]="isAnimations">
     </ngx-charts-line-chart>
   </div>
 
-  <button
-    routerLink="/"
-    routerLinkActive="active"
-    ariaCurrentWhenActive="page"
-    class="back"
-  >
+  <button routerLink="/" routerLinkActive="active" ariaCurrentWhenActive="page" class="back">
     Back to home
   </button>
 </div>

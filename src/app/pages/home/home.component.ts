@@ -2,9 +2,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Observable } from 'rxjs';
 import { Olympic } from 'src/app/core/models/Olympic';
-import { Router } from '@angular/router';
 import { OlympicService } from 'src/app/core/services/olympic.service';
 import { Color } from '@swimlane/ngx-charts';
+import { Country } from 'src/app/core/models/Country';
 
 @Component({
   selector: 'app-home',
@@ -13,15 +13,12 @@ import { Color } from '@swimlane/ngx-charts';
 })
 export class HomeComponent implements OnInit, OnDestroy {
   private olympicsSubscription: Subscription = new Subscription();
-  constructor(
-    private olympicService: OlympicService, 
-    private router: Router
-  ) {}
+  constructor(private olympicService: OlympicService) {}
 
   olympics$!: Observable<Olympic[] | undefined | null>;
-  selectedCountryData!: Olympic | undefined | null;
+  countryData!: Olympic | undefined | null; 
 
-  // options
+  // Options
   view: [number, number] = [800, 400];
   showLegend: boolean = false;
   showLabels: boolean = true;
@@ -30,11 +27,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   isDoughnut: boolean = false;
   isGradient: boolean = false;
 
-  // colors
+  // Colors
   colorScheme: Color = {
-    domain: ['#A66870', '#8B415D', '#90ACE2', '#A48AAC', '#C1E5F4', '#BDD2EB']
+    domain: ['#A66870', '#8B415D', '#90ACE2', '#A48AAC', '#C1E5F4', '#BDD2EB'],
   } as Color;
-
 
   ngOnInit(): void {
     // Olympics data
@@ -42,62 +38,41 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-      this.olympicsSubscription.unsubscribe();
+    this.olympicsSubscription.unsubscribe();
   }
 
   /**
-   * Method to get number of countries
-   * @param olympics data of country in Olympics
-   * @returns number of countries
+   * Method to get number of countries.
+   * @param olympics data of country in Olympics.
+   * @returns number of countries.
    */
   getNumberOfCountries(olympics: Olympic[]): number {
-    return olympics.length;
+    return this.olympicService.getNumberOfCountries(olympics);
   }
 
   /**
-   * Method to get number of JOs
-   * @param olympics data of country in Olympics
-   * @returns number of JOs
+   * Method to get number of JOs.
+   * @param olympics data of country in Olympics.
+   * @returns number of JOs.
    */
   getNumberOfJOs(olympics: Olympic[]): number {
-    return olympics.length > 0 ? olympics[0].participations.length : 0;
+    return this.olympicService.getNumberOfJOs(olympics);
   }
 
   /**
-   * Method to get medals per country
-   * @param olympics data of country in Olympics
-   * @returns total medals count per country
+   * Method to get medals per country.
+   * @param olympics data of country in Olympics.
+   * @returns total medals count per country.
    */
-  getMedalsPerCountry(olympics: Olympic[]): { name: string; value: number }[] {
-    return olympics.map((olympic) => ({
-      name: olympic.country,
-      value: olympic.participations.reduce(
-        (total, participation) => total + participation.medalsCount,
-        0
-      ),
-    }));
+  getMedalsPerCountry(olympics: Olympic[]): Country[] {
+    return this.olympicService.getMedalsPerCountry(olympics);
   }
 
   /**
-   * Method to get data of selected country
-   * @param event 
+   * Method to get data of selected country.
+   * @param event Country.
    */
-  getOlympicsByCountry(event: { name: string }): void {
-    const selectedCountry = event.name;
-
-    this.olympicsSubscription = this.olympics$.subscribe((olympics) => {
-      if (olympics) {
-        this.selectedCountryData = olympics.find(
-          (olympic: { country: string }) => olympic.country === selectedCountry
-        );
-
-        const idSelectedCountry = this.selectedCountryData?.id;
-
-        if (idSelectedCountry) {
-          this.router.navigate(['/detail'], { queryParams: { id: idSelectedCountry } });
-        }
-      }
-    });
+  getOlympicsByCountry(event: Country): void {
+    return this.olympicService.getOlympicsByCountry(event, this.olympics$, this.countryData);
   }
-
 }

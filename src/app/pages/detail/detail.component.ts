@@ -1,17 +1,18 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router, RouterModule } from '@angular/router';
 import { Color, NgxChartsModule } from '@swimlane/ngx-charts';
-import { Observable, Subscription } from 'rxjs';
+import { map, Observable, Subscription, switchMap, timeout } from 'rxjs';
 import { Olympic } from 'src/app/core/models/Olympic';
 import { OlympicService } from 'src/app/core/services/olympic.service';
 import { CountComponent } from '../count/count.component';
+import { Country } from 'src/app/core/models/Country';
 
 @Component({
   selector: 'app-detail',
   standalone: true,
   imports: [NgxChartsModule, RouterModule, CountComponent],
   templateUrl: './detail.component.html',
-  styleUrls: ['./detail.component.scss']
+  styleUrls: ['./detail.component.scss'],
 })
 export class DetailComponent implements OnInit, OnDestroy {
   private Olympicsubscriptions: Subscription = new Subscription();
@@ -22,7 +23,7 @@ export class DetailComponent implements OnInit, OnDestroy {
   ) {}
 
   olympics$!: Observable<Olympic[] | undefined | null>;
-  selectedCountryData: Olympic | null = null;
+  countryData: Olympic | null = null;
 
   // Options
   view: [number, number] = [500, 300];
@@ -37,112 +38,76 @@ export class DetailComponent implements OnInit, OnDestroy {
 
   // Colors
   colorScheme: Color = {
-    domain: ['#008591']
+    domain: ['#008591'],
   } as Color;
 
   ngOnInit(): void {
-    // Olympics data
+    // Olympic Data
     this.olympics$ = this.olympicService.getOlympics();
-  
+
     this.Olympicsubscriptions.add(
-      this.route.queryParams.subscribe((params) => {
-        const idSelectedCountry = +params['id'];
-  
-        this.olympics$.subscribe((olympics) => {
-          if (isNaN(idSelectedCountry) || idSelectedCountry < 1 || !olympics?.some(olympic => olympic.id === idSelectedCountry)) {
-            console.log('ID inconnu ou invalide, redirection...');
+      this.route.paramMap.pipe(
+        switchMap((params: ParamMap) => {
+          const idSelectedCountry = +params.get('id')!;
+          return this.olympics$.pipe(
+            map((olympics) => {
+              const countryData = olympics?.find(
+                (olympic: { id: number }) => olympic.id === idSelectedCountry
+              ) || null;
+              return countryData;
+            })
+          );
+        })
+      ).subscribe((countryData) => {
+        this.countryData = countryData;
+        if (!countryData) {
+        setTimeout(() => {
+          if (!this.countryData) {
             this.router.navigate(['/unknown-page']);
-          } else {
-            this.selectedCountryData = olympics?.find(
-              (olympic: { id: number }) => olympic.id === idSelectedCountry
-            ) || null;
           }
-        });
+        }, 1000);
+      }
       })
     );
-  }
-  
+  }   
 
   ngOnDestroy(): void {
     this.Olympicsubscriptions.unsubscribe();
   }
 
   /**
-   * Method to get total number of entries of country selected
-   * @param olympic data of country in Olympics
-   * @returns total number of entries
+   * Method to get total number of entries of country selected.
+   * @param olympic data of country in Olympics.
+   * @returns total number of entries.
    */
   getNumberOfEntries(olympic: Olympic): number {
-    return olympic.participations.length;
+    return this.olympicService.getNumberOfEntries(olympic);
   }
 
   /**
-   * Method to get total number of medals of country selected
-   * @param olympic data of country in Olympics
-   * @returns total number of medals
+   * Method to get total number of medals of country selected.
+   * @param olympic data of country in Olympics.
+   * @returns total number of medals.
    */
   getNumberOfMedals(olympic: Olympic): number {
-    return olympic.participations.reduce(
-      (total, participation) => total + participation.medalsCount,
-      0
-    );
+    return this.olympicService.getNumberOfMedals(olympic);
   }
 
   /**
-   * Method to get total number of athletes of country selected
-   * @param olympic data of country in Olympics
-   * @returns total number of athletes
+   * Method to get total number of athletes of country selected.
+   * @param olympic data of country in Olympics.
+   * @returns total number of athletes.
    */
   getNumberOfAthletes(olympic: Olympic): number {
-    return olympic.participations.reduce(
-      (total, participation) => total + participation.athleteCount,
-      0
-    );
+    return this.olympicService.getNumberOfAthletes(olympic);
   }
 
   /**
-   * Method to get number medals by year
-   * @param olympic data of country in Olympics
-   * @returns number of medals by year
+   * Method to get number medals by year.
+   * @param olympic data of country in Olympics.
+   * @returns number of medals by year.
    */
-  getMedalsOverTime(
-    olympic: Olympic
-  ): { name: string; series: { name: string; value: number }[] }[] {
-    return [
-      {
-        name: olympic.country,
-        series: olympic.participations.map((participation) => ({
-          name: participation.year.toString(),
-          value: participation.medalsCount,
-        })),
-      },
-    ];
+  getMedalsOverTime(olympic: Olympic): Country[] {
+    return this.olympicService.getMedalsOverTime(olympic);
   }
-
-  /**
- * Method to get selected country
- * @param event
- */
-onSelectCountry(event: { id: number }): void {
-  const idSelectedCountry = event.id;
-  // Data of selected country
-  this.Olympicsubscriptions.add(
-    this.olympics$.subscribe((olympics: Olympic[] | undefined | null) => {
-      this.selectedCountryData =
-        olympics?.find((olympic) => olympic.id === idSelectedCountry) || null;
-
-      this.route.queryParams.subscribe((params) => {
-        const idParams = +params['id'];  // Conversion en nombre avec le "+" devant params['id']
-
-        if (isNaN(idParams) || idParams < 1 || !olympics?.some(olympic => olympic.id === idParams)) {
-          console.log('ID inconnu ou invalide, redirection...');
-          this.router.navigate(['/unknown-page']);
-        } else {
-          console.log(`ID valide : ${idParams}`);
-        }
-      });
-    })
-  );
-}
-
 }
