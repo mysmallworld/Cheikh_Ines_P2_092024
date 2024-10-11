@@ -61,8 +61,12 @@ export class DetailComponent implements OnInit, OnDestroy {
       ).subscribe((countryData) => {
         this.countryData = countryData;
         if (!countryData) {
-          this.router.navigate(['/unknown-page']);
-        }
+        setTimeout(() => {
+          if (!this.countryData) {
+            this.router.navigate(['/unknown-page']);
+          }
+        }, 1000);
+      }
       })
     );
   }   

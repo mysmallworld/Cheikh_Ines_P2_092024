@@ -18,7 +18,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   olympics$!: Observable<Olympic[] | undefined | null>;
   countryData!: Olympic | undefined | null; 
 
-  // options
+  // Options
   view: [number, number] = [800, 400];
   showLegend: boolean = false;
   showLabels: boolean = true;
@@ -27,7 +27,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   isDoughnut: boolean = false;
   isGradient: boolean = false;
 
-  // colors
+  // Colors
   colorScheme: Color = {
     domain: ['#A66870', '#8B415D', '#90ACE2', '#A48AAC', '#C1E5F4', '#BDD2EB'],
   } as Color;
