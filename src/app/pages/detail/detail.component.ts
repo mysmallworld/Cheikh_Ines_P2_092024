@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router, RouterModule } from '@angular/router';
 import { Color, NgxChartsModule } from '@swimlane/ngx-charts';
-import { map, Observable, Subscription, switchMap, timeout } from 'rxjs';
+import { map, Observable, Subscription, switchMap } from 'rxjs';
 import { Olympic } from 'src/app/core/models/Olympic';
 import { OlympicService } from 'src/app/core/services/olympic.service';
 import { CountComponent } from '../count/count.component';
@@ -65,7 +65,7 @@ export class DetailComponent implements OnInit, OnDestroy {
           if (!this.countryData) {
             this.router.navigate(['/unknown-page']);
           }
-        }, 1000);
+        }, 10);
       }
       })
     );
