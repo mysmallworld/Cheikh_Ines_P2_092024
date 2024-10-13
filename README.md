@@ -25,10 +25,10 @@ Before you begin, ensure you have the following installed:
   npm -v
   ```
 
-- **Angular CLI**: Version 18.0.3  
+- **Angular CLI**: Version 18.0.5  
   Install it globally if you haven't already:
   ```bash
-  npm install -g @angular/cli@18.0.3
+  npm install -g @angular/cli@18.0.5
   ```
 
 - **Git**: Version 2.38.1 or later  
